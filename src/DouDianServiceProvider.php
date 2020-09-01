@@ -13,7 +13,7 @@ class DouDianServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(EasyDouDian::class, function ($app) {
+        $this->app->singleton("doudian", function ($app) {
             return new EasyDouDian(config('options.default.app_id'), config('options.default.app_secret'));
         });
     }
