@@ -13,6 +13,9 @@ class DouDianServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(
+            __DIR__ . '/config/doudian.php', 'doudian'
+        );
         $this->app->singleton("doudian", function ($app) {
             return new EasyDouDian(config('options.default.app_id'), config('options.default.app_secret'));
         });
