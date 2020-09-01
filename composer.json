@@ -1,0 +1,19 @@
+{
+    "name": "manbinzheng/easy-doudian",
+    "description": "easy-doudian",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "easy-doudian",
+            "email": "manbinzheng@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ManbinZheng\\EasyDouDian\\": "src/"
+        }
+    }
+}

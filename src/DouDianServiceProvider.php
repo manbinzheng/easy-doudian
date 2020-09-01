@@ -1,0 +1,32 @@
+<?php
+
+namespace ManbinZheng\EasyDouDian;
+
+use Illuminate\Support\ServiceProvider;
+
+class DouDianServiceProvider extends ServiceProvider
+{
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->singleton(EasyDouDian::class, function ($app) {
+            return new EasyDouDian(config('options.default.app_id'), config('options.default.app_secret'));
+        });
+    }
+
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->publishes([
+            __DIR__ . '/config/doudian.php' => config_path('doudian.php'), // 发布配置文件到 laravel 的config 下
+        ]);
+    }
+}
