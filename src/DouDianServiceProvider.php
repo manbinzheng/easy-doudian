@@ -13,12 +13,12 @@ class DouDianServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/config/doudian.php', 'doudian'
-        );
-        $this->app->singleton("doudian", function ($app) {
-            return new EasyDouDian(config('doudian.options.default.app_id'), config('doudian.options.default.app_secret'));
-        });
+        $config = config('doudian');
+        foreach ($config['options'] as $key => $option) {
+            $this->app->bind($key == 'default' ? 'doudian' : 'doudian.' . $key, function ($app) use ($key, $option) {
+                return new EasyDouDian($option['app_id'], $option['app_secret']);
+            });
+        }
     }
 
     /**
