@@ -14,25 +14,26 @@ class Base
 
     protected function baseRequest($method, $param = [])
     {
-        $url = 'https://openapi-fxg.jinritemai.com';
-        sort($param);
+        $url = 'https://openapi-fxg.jinritemai.com' . "/" . str_replace('.', '/', $method);
+        ksort($param);
         $data = [
             'method' => $method,
             'app_key' => $this->app_key,
             'access_token' => $this->getAccessToken(),
             'param_json' => $param ? json_encode($param) : '{}',
-            'timestamp' => date('yy-m-d H:m:s', time()),
+            'timestamp' => urlencode(date('yy-m-d H:m:s', time())),
             'v' => 2,
         ];
-        sort($data);
-        $str = $this->app_key;
-        foreach ($data as $k => $v) $str .= $k . $v;
+        ksort($data);
+        $str = $this->app_secret;
+        foreach ($data as $k => $v) {
+            if ($k != 'access_token') $str .= $k . $v;
+        }
         $str = $str . $this->app_secret;
         $data['sign'] = md5($str);
-
         $client = new Client();
-        $response = $client->request('GET', $url, [
-            'query' => $data
+        $response = $client->request('POST', $url, [
+            'form_params' => $data
         ]);
         return json_decode($response->getBody(), true);
     }

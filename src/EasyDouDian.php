@@ -235,15 +235,15 @@ class EasyDouDian extends Base
     /**
      * @param string $start_time 开始时间 示例:2018/06/03 00:00:00
      * @param string $end_time 结束时间 示例:2018/06/03 00:01:00
-     * @param int $page 页数（默认为0，第一页从0开始）
-     * @param int $size 每页订单数（默认为10，最大100）
+     * @param string $page 页数（默认为0，第一页从0开始）
+     * @param string $size 每页订单数（默认为10，最大100）
      * @param string $order_by 1、默认按订单创建时间搜索 2、值为“create_time”：按订单创建时间；值为“update_time”：按订单更新时间
-     * @param bool $is_desc 订单排序方式：设置了此字段即为desc(最近的在前)默认为asc（最近的在后）
+     * @param string $is_desc 订单排序方式：设置了此字段即为desc(最近的在前)默认为asc（最近的在后）
      * @param null $order_status 子订单状态
      * @return mixed
      * 支持按照子订单状态和订单的创建时间、更新时间来检索订单，获取订单列表
      */
-    public function orderList($start_time, $end_time, $page, $size = 10, $order_by = null, bool $is_desc = false, $order_status = null)
+    public function orderList($start_time, $end_time, $page, $size, $order_by, $is_desc, $order_status = null)
     {
         $data = [
             'start_time' => $start_time,
