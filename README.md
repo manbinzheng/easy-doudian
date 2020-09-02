@@ -18,7 +18,7 @@ composer require "manbinzheng/easy-doudian"
 ```php
 'providers' => [
     // ...
-    \ManbinZheng\EasyDouDian\DouDianServiceProvider::class,
+    ManbinZheng\EasyDouDian\DouDianServiceProvider::class,
 ]
 ```
 
