@@ -14,10 +14,12 @@ class DouDianServiceProvider extends ServiceProvider
     public function register()
     {
         $config = config('doudian');
-        foreach ($config['options'] as $key => $option) {
-            $this->app->bind($key == 'default' ? 'doudian' : 'doudian.' . $key, function ($app) use ($key, $option) {
-                return new EasyDouDian($option['app_id'], $option['app_secret']);
-            });
+        if (isset($config['options'])) {
+            foreach ($config['options'] as $key => $option) {
+                $this->app->bind($key == 'default' ? 'doudian' : 'doudian.' . $key, function ($app) use ($key, $option) {
+                    return new EasyDouDian($option['app_id'], $option['app_secret']);
+                });
+            }
         }
     }
 
