@@ -11,6 +11,7 @@ class Base
 {
     protected $app_key = '';
     protected $app_secret = '';
+    protected $access_token_key = 'easy_doudian:access_token';
 
     protected function baseRequest($method, $param = [])
     {
@@ -20,7 +21,7 @@ class Base
             'method' => $method,
             'app_key' => $this->app_key,
             'access_token' => $this->getAccessToken(),
-            'param_json' => $param ? json_encode($param,JSON_UNESCAPED_UNICODE) : '{}',
+            'param_json' => $param ? json_encode($param, JSON_UNESCAPED_UNICODE) : '{}',
             'timestamp' => urlencode(date('yy-m-d H:m:s', time())),
             'v' => 2,
         ];
@@ -35,14 +36,18 @@ class Base
         $response = $client->request('POST', $url, [
             'form_params' => $data
         ]);
-        return json_decode($response->getBody(), true);
+        $response = json_decode($response->getBody(), true);
+        if ($response && $response['err_no'] == 30005) {
+            Cache::forget($this->access_token_key);
+            return $this->baseRequest($method, $param);
+        }
+        return $response;
     }
 
 
     protected function getAccessToken()
     {
-        $key = 'easy_doudian:access_token';
-        if (!Cache::has($key)) {
+        if (!Cache::has($this->access_token_key)) {
             $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?app_id='
                 . $this->app_key . '&app_secret=' . $this->app_secret . '&grant_type=authorization_self';
 
@@ -51,11 +56,11 @@ class Base
             $ret = json_decode($response->getBody(), true);
             if ($ret && $ret['err_no'] == 0) {
                 $access_token = $ret['data']['access_token'];
-                Cache::put($key, $access_token, $ret['data']['expires_in']);
+                Cache::put($this->access_token_key, $access_token, $ret['data']['expires_in']);
             } else {
                 throw new \Exception(json_encode($ret));
             }
         }
-        return Cache::get($key);
+        return Cache::get($this->access_token_key);
     }
 }
