@@ -20,7 +20,7 @@ class Base
             'method' => $method,
             'app_key' => $this->app_key,
             'access_token' => $this->getAccessToken(),
-            'param_json' => $param ? json_encode($param) : '{}',
+            'param_json' => $param ? json_encode($param,JSON_UNESCAPED_UNICODE) : '{}',
             'timestamp' => urlencode(date('yy-m-d H:m:s', time())),
             'v' => 2,
         ];
