@@ -402,4 +402,15 @@ class EasyDouDian extends Base
     {
         return $this->baseRequest($method, $data);
     }
+
+
+    /**
+     * @return mixed|void
+     * @throws \Exception
+     * 获取access_token
+     */
+    public function getAccessToken()
+    {
+        return parent::getAccessToken();
+    }
 }
