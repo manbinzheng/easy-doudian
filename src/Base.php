@@ -4,8 +4,8 @@
 namespace ManbinZheng\EasyDouDian;
 
 
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
+use ManbinZheng\EasyDouDian\Http\HttpService;
 
 class Base
 {
@@ -32,11 +32,8 @@ class Base
         }
         $str = $str . $this->app_secret;
         $data['sign'] = md5($str);
-        $client = new Client();
-        $response = $client->request('POST', $url, [
-            'form_params' => $data
-        ]);
-        $response = json_decode($response->getBody(), true);
+        $response = HttpService::request($url, 'POST', $data);
+        $response = json_decode($response, true);
         if ($response && $response['err_no'] == 30005) {
             Cache::forget($this->access_token_key);
             return $this->baseRequest($method, $param);
@@ -50,15 +47,16 @@ class Base
         if (!Cache::has($this->access_token_key)) {
             $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?app_id='
                 . $this->app_key . '&app_secret=' . $this->app_secret . '&grant_type=authorization_self';
-
-            $client = new Client();
-            $response = $client->request('GET', $url);
-            $ret = json_decode($response->getBody(), true);
-            if ($ret && $ret['err_no'] == 0) {
-                $access_token = $ret['data']['access_token'];
-                Cache::put($this->access_token_key, $access_token, $ret['data']['expires_in']);
+            $response = HttpService::request($url, 'GET');
+            $response = json_decode($response, true);
+            if ($response && $response['err_no'] == 0) {
+                if (!Cache::put($this->access_token_key,
+                    $response['data']['access_token'],
+                    $response['data']['expires_in'])) {
+                    throw new \Exception('access_token缓存失败，请检查框架缓存配置！');
+                }
             } else {
-                throw new \Exception(json_encode($ret));
+                throw new \Exception(json_encode($response));
             }
         }
         return Cache::get($this->access_token_key);

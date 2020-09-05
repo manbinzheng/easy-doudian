@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services;
+namespace ManbinZheng\EasyDouDian\Http;
 
 class HttpService
 {
