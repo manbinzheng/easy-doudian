@@ -11,7 +11,7 @@ class Base
 {
     protected $app_key = '';
     protected $app_secret = '';
-    protected $access_token_key = 'easy_doudian:access_token';
+    protected $access_token_key = 'easy_doudian:access_token:';
 
     protected function baseRequest($method, $param = [])
     {
@@ -42,15 +42,25 @@ class Base
     }
 
 
-    protected function getAccessToken()
+    protected function getAccessToken($code = null)
     {
         if (!Cache::has($this->access_token_key)) {
-            $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?app_id='
-                . $this->app_key . '&app_secret=' . $this->app_secret . '&grant_type=authorization_self';
+            $query_data = [
+                'app_id' => $this->app_key,
+                'app_secret' => $this->app_secret,
+            ];
+            if ($code) {
+                $query_data['code'] = $code;
+                $query_data['grant_type'] = 'authorization_code';
+            } else {
+                $query_data['grant_type'] = 'authorization_self';
+            }
+            $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?' . http_build_query($query_data);
             $response = HttpService::request($url, 'GET');
             $response = json_decode($response, true);
             if ($response && $response['err_no'] == 0) {
-                if (!Cache::put($this->access_token_key,
+                if (!Cache::put(
+                    $this->access_token_key . $query_data['grant_type'] . ':' . $response['data']['shop_id'],
                     $response['data']['access_token'],
                     $response['data']['expires_in'])) {
                     throw new \Exception('access_token缓存失败，请检查框架缓存配置！');
