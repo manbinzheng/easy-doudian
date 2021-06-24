@@ -12,7 +12,7 @@
 composer require "manbinzheng/easy-doudian"
 ```
 
-## 配置
+## laravel配置
 1. 在应用根目录下的`config/app.php` 找到providers标签，注册 ServiceProvider
 
 ```php
@@ -28,7 +28,26 @@ composer require "manbinzheng/easy-doudian"
 php artisan vendor:publish --provider="ManbinZheng\EasyDouDian\DouDianServiceProvider"
 ```
 
-3. 修改应用根目录下的 `config/doudian.php` 配置开放平台的参数。建议将敏感数据放于.env中。
+## lumen配置
+1. 复制配置文件至config文件夹
+```shell
+cp -r vendor/manbinzheng/easy-doudian/src/config ./
+```
+
+
+2. 在bootstrap/app.php中注册config文件和ServiceProvider
+
+```php
+...
+$app->configure('doudian');
+$app->register(ManbinZheng\EasyDouDian\DouDianServiceProvider::class);
+
+return $app;
+```
+
+## 配置参数
+
+修改应用根目录下的 `config/doudian.php` 配置开放平台的参数。建议将敏感数据放于.env中。
 ```php
 return [
     'options' => [
