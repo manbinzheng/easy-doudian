@@ -30,8 +30,10 @@ class DouDianServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/config/doudian.php' => config_path('doudian.php'), // 发布配置文件到 laravel 的config 下
-        ]);
+        if (function_exists('config_path')) {
+            $this->publishes([
+                __DIR__ . '/config/doudian.php' => config_path('doudian.php'), // 发布配置文件到 laravel 的config 下
+            ]);
+        }
     }
 }
