@@ -38,7 +38,9 @@ cp -r vendor/manbinzheng/easy-doudian/src/config ./
 2. 在bootstrap/app.php中注册config文件和ServiceProvider
 
 ```php
+
 ...
+
 $app->configure('doudian');
 $app->register(ManbinZheng\EasyDouDian\DouDianServiceProvider::class);
 
