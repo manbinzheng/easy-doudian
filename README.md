@@ -75,7 +75,8 @@ app('doudian.defined.account')->orderDetail('894775625');
 
 
 
-#### 店铺api
+#### 店铺api app('doudian')->shop
 
-- 获取店铺的已授权品牌列表 app('doudian')->shopBrandList()
+- 获取店铺的已授权品牌列表 app('doudian')->shop->brandList()
+- 获取店铺的已授权品牌列表 shopBrandList()
 
