@@ -66,17 +66,14 @@ return [
 ```
 
 ## 使用
+先查阅官方文档，获取接口method参数，以及业务参数，业务参数以数组对象传参
+抖店开放平台官方文档：https://op.jinritemai.com/docs/api-docs
 ```php
 //默认实例获取订单详情
-app('doudian')->orderDetail('894775625');
+app('doudian')->request('order.detail',['order_id'=>'894775625']);
 //多账号实例获取订单详情
-app('doudian.defined.account')->orderDetail('894775625');
+app('doudian.defined.account')->request('order.detail',['order_id'=>'894775625']);
+
+//无业务参数只传method参数
+app('doudian')->request('shop.brandList');
 ```
-
-
-
-#### 店铺api app('doudian')->shop
-
-- 获取店铺的已授权品牌列表 app('doudian')->shop->brandList()
-- 获取店铺的已授权品牌列表 shopBrandList()
-
