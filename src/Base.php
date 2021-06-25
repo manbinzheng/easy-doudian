@@ -14,6 +14,19 @@ class Base
     protected $app_secret = '';
     protected $access_token_key = 'easy_doudian:access_token';
 
+    /**
+     * Base constructor.
+     * @param string $app_key 抖店开放平台工具app_key
+     * @param string $app_secret 抖店开放平台工具app_secret
+     * @throws \Exception
+     */
+    public function __construct($app_key, $app_secret)
+    {
+        if (!$app_key || !$app_secret) throw new \Exception('请先配置app_key与app_secret！');
+        $this->app_key = $app_key;
+        $this->app_secret = $app_secret;
+    }
+
     protected function baseRequest($method, $param = [])
     {
         $url = 'https://openapi-fxg.jinritemai.com' . "/" . str_replace('.', '/', $method);
