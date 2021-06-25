@@ -4,6 +4,7 @@
 namespace ManbinZheng\EasyDouDian;
 
 
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use ManbinZheng\EasyDouDian\Http\HttpService;
 
@@ -11,7 +12,7 @@ class Base
 {
     protected $app_key = '';
     protected $app_secret = '';
-    protected $access_token_key = 'easy_doudian:access_token:';
+    protected $access_token_key = 'easy_doudian:access_token';
 
     protected function baseRequest($method, $param = [])
     {
@@ -22,7 +23,7 @@ class Base
             'app_key' => $this->app_key,
             'access_token' => $this->getAccessToken(),
             'param_json' => $param ? json_encode($param, JSON_UNESCAPED_UNICODE) : '{}',
-            'timestamp' => urlencode(date('yy-m-d H:m:s', time())),
+            'timestamp' => date('Y-m-d H:i:s', time()),
             'v' => 2,
         ];
         ksort($data);
@@ -42,31 +43,19 @@ class Base
     }
 
 
-    protected function getAccessToken($code = null)
+    protected function getAccessToken()
     {
         if (!Cache::has($this->access_token_key)) {
-            $query_data = [
-                'app_id' => $this->app_key,
-                'app_secret' => $this->app_secret,
-            ];
-            if ($code) {
-                $query_data['code'] = $code;
-                $query_data['grant_type'] = 'authorization_code';
+            $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?app_id='
+                . $this->app_key . '&app_secret=' . $this->app_secret . '&grant_type=authorization_self';
+            $client = new Client();
+            $response = $client->request('GET', $url);
+            $ret = json_decode($response->getBody(), true);
+            if ($ret && $ret['err_no'] == 0) {
+                $access_token = $ret['data']['access_token'];
+                Cache::put($this->access_token_key, $access_token, $ret['data']['expires_in']);
             } else {
-                $query_data['grant_type'] = 'authorization_self';
-            }
-            $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?' . http_build_query($query_data);
-            $response = HttpService::request($url, 'GET');
-            $response = json_decode($response, true);
-            if ($response && $response['err_no'] == 0) {
-                if (!Cache::put(
-                    $this->access_token_key . $query_data['grant_type'] . ':' . $response['data']['shop_id'],
-                    $response['data']['access_token'],
-                    $response['data']['expires_in'])) {
-                    throw new \Exception('access_token缓存失败，请检查框架缓存配置！');
-                }
-            } else {
-                throw new \Exception(json_encode($response));
+                throw new \Exception(json_encode($ret));
             }
         }
         return Cache::get($this->access_token_key);
