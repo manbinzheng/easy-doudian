@@ -4,7 +4,6 @@
 namespace ManbinZheng\EasyDouDian;
 
 
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use ManbinZheng\EasyDouDian\Http\HttpService;
 
@@ -61,8 +60,8 @@ class Base
         if (!Cache::has($this->access_token_key)) {
             $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?app_id='
                 . $this->app_key . '&app_secret=' . $this->app_secret . '&grant_type=authorization_self';
-            $client = new Client();
-            $response = $client->request('GET', $url);
+            $response = HttpService::request($url, 'GET');
+            $response = json_decode($response, true);
             $ret = json_decode($response->getBody(), true);
             if ($ret && $ret['err_no'] == 0) {
                 $access_token = $ret['data']['access_token'];
