@@ -62,8 +62,7 @@ class Base
             $url = 'https://openapi-fxg.jinritemai.com/oauth2/access_token?app_id='
                 . $this->app_key . '&app_secret=' . $this->app_secret . '&grant_type=authorization_self';
             $response = HttpService::request($url, 'GET');
-            $response = json_decode($response, true);
-            $ret = json_decode($response->getBody(), true);
+            $ret = json_decode($response, true);
             if ($ret && $ret['err_no'] == 0) {
                 $access_token = $ret['data']['access_token'];
                 Cache::put($key, $access_token, $ret['data']['expires_in']);
